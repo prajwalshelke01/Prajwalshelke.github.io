@@ -1,0 +1,435 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Syne',sans-serif;background:#0a0e17;color:#e2e8f0;font-size:13px}
+.mono{font-family:'Space Mono',monospace}
+.g{color:#00ff88}.b{color:#00d4ff}.r{color:#ff4444}.y{color:#ffaa00}
+
+.shell{background:#0a0e17;border:1px solid rgba(0,255,136,.18);border-radius:14px;overflow:hidden;max-width:700px;margin:0 auto}
+
+.topbar{background:#0d1520;border-bottom:1px solid rgba(0,255,136,.12);padding:10px 16px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Space Mono',monospace;font-size:13px;color:#00ff88;letter-spacing:.08em}
+.ver{font-size:10px;padding:2px 7px;background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.2);color:#00ff88;border-radius:4px;margin-left:8px;font-family:'Space Mono',monospace}
+.live{display:flex;align-items:center;gap:6px;font-size:11px;color:#64748b;font-family:'Space Mono',monospace}
+.dot{width:6px;height:6px;border-radius:50%;background:#00ff88;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.tabs{display:flex;background:#0d1520;border-bottom:1px solid rgba(0,255,136,.1)}
+.tab{flex:1;padding:10px 6px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;color:#64748b;border-bottom:2px solid transparent;transition:all .2s}
+.tab.active{color:#00ff88;border-bottom-color:#00ff88;background:rgba(0,255,136,.04)}
+.tab:hover:not(.active){color:#e2e8f0}
+.panel{display:none;padding:14px 16px}.panel.active{display:block}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.field label{display:block;font-size:10px;color:#64748b;font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+.field input,.field select{width:100%;background:#111827;border:1px solid rgba(255,255,255,.08);color:#e2e8f0;padding:9px 11px;font-family:'Space Mono',monospace;font-size:12px;border-radius:6px;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus{border-color:rgba(0,255,136,.4)}
+.field select option{background:#111827}
+
+.modes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.mode{background:#111827;border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:10px 6px;text-align:center;cursor:pointer;transition:all .2s}
+.mode.sel{background:rgba(0,255,136,.07);border-color:rgba(0,255,136,.35)}
+.mode-icon{font-size:18px;margin-bottom:5px}
+.mode-name{font-size:12px;font-weight:700;margin-bottom:2px}
+.mode-desc{font-size:10px;color:#64748b;line-height:1.3}
+
+.checks-label{font-size:10px;color:#64748b;font-family:'Space Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}
+.checks{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px}
+.chk{display:flex;align-items:center;gap:7px;background:#111827;border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:7px 9px;cursor:pointer;transition:all .2s}
+.chk.on{border-color:rgba(0,212,255,.3);background:rgba(0,212,255,.05)}
+.chkbox{width:14px;height:14px;border:1px solid #64748b;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:9px;color:transparent}
+.chk.on .chkbox{background:#00d4ff;border-color:#00d4ff;color:#000}
+.chk-label{font-size:11px;color:#94a3b8}
+
+.run-btn{width:100%;padding:13px;background:#00ff88;color:#000;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;border:none;cursor:pointer;border-radius:8px;transition:all .2s}
+.run-btn:hover{background:#00cc6e;transform:translateY(-1px)}
+.run-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+.terminal{background:#050810;border:1px solid rgba(0,255,136,.12);border-radius:8px;overflow:hidden;margin-bottom:12px}
+.term-bar{background:#0d1520;padding:7px 12px;display:flex;align-items:center;gap:7px;border-bottom:1px solid rgba(0,255,136,.1)}
+.td{width:9px;height:9px;border-radius:50%}
+.term-title{font-family:'Space Mono',monospace;font-size:10px;color:#64748b;margin-left:4px}
+.term-body{padding:10px 12px;height:160px;overflow-y:auto;font-family:'Space Mono',monospace;font-size:11px;line-height:1.7}
+.tl{margin-bottom:1px}
+.tc-g{color:#00ff88}.tc-b{color:#00d4ff}.tc-r{color:#ff4444}.tc-y{color:#ffaa00}.tc-w{color:#94a3b8}
+
+.prog-wrap{margin-bottom:12px}
+.prog-top{display:flex;justify-content:space-between;margin-bottom:6px}
+.prog-lbl{font-size:11px;color:#94a3b8;font-family:'Space Mono',monospace}
+.prog-pct{font-size:12px;font-weight:700;color:#00ff88;font-family:'Space Mono',monospace}
+.prog-track{height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#00ff88,#00d4ff);border-radius:2px;width:0%;transition:width .4s}
+
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px}
+.sc{background:#111827;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px 6px;text-align:center}
+.sc::before{content:'';display:block;height:2px;border-radius:1px;margin-bottom:8px}
+.sc.crit::before{background:#ff4444}.sc.high::before{background:#ffaa00}
+.sc.med::before{background:#00d4ff}.sc.low::before{background:#00ff88}.sc.info::before{background:#a855f7}
+.sn{font-size:22px;font-weight:800;font-family:'Space Mono',monospace;display:block;margin-bottom:2px}
+.sn.crit{color:#ff4444}.sn.high{color:#ffaa00}.sn.med{color:#00d4ff}.sn.low{color:#00ff88}.sn.info{color:#a855f7}
+.sl{font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.08em}
+
+.risk-box{background:#111827;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px 14px;margin-bottom:12px}
+.risk-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.risk-title{font-size:11px;color:#64748b;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:.08em}
+.risk-score{font-size:24px;font-weight:800;font-family:'Space Mono',monospace}
+.risk-track{height:8px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden;margin-bottom:6px}
+.risk-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,#00ff88,#ffaa00,#ff4444);transition:width 1s}
+.risk-lbls{display:flex;justify-content:space-between;font-size:9px;color:#64748b;font-family:'Space Mono',monospace}
+
+.sec-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.sec-hd span{font-size:10px;color:#64748b;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:.1em}
+.sec-hd::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06)}
+
+.pmap{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:5px;margin-bottom:12px}
+.pc{background:#111827;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:8px 6px;text-align:center;transition:all .2s}
+.pc:hover{border-color:rgba(0,255,136,.25)}
+.pc.open{border-color:rgba(0,255,136,.2)}.pc.filtered{border-color:rgba(255,170,0,.2)}.pc.closed{opacity:.35}
+.pn{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;margin-bottom:2px}
+.pc.open .pn{color:#00ff88}.pc.filtered .pn{color:#ffaa00}.pc.closed .pn{color:#64748b}
+.ps{font-size:9px;color:#94a3b8;margin-bottom:3px}
+.pst{font-size:8px;padding:2px 4px;border-radius:3px;font-family:'Space Mono',monospace}
+.pc.open .pst{background:rgba(0,255,136,.1);color:#00ff88}
+.pc.filtered .pst{background:rgba(255,170,0,.1);color:#ffaa00}
+.pc.closed .pst{background:rgba(255,255,255,.05);color:#64748b}
+
+.vlst{display:flex;flex-direction:column;gap:8px}
+.vc{background:#111827;border:1px solid rgba(255,255,255,.06);border-radius:8px;overflow:hidden;transition:all .2s}
+.vc:hover{transform:translateY(-1px)}
+.vc.critical{border-left:3px solid #ff4444}.vc.high{border-left:3px solid #ffaa00}
+.vc.medium{border-left:3px solid #00d4ff}.vc.low{border-left:3px solid #00ff88}
+.vh{padding:10px 12px;display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.vsev{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;white-space:nowrap;flex-shrink:0;margin-top:1px;font-family:'Space Mono',monospace}
+.vsev.critical{background:rgba(255,68,68,.15);color:#ff4444}
+.vsev.high{background:rgba(255,170,0,.15);color:#ffaa00}
+.vsev.medium{background:rgba(0,212,255,.15);color:#00d4ff}
+.vsev.low{background:rgba(0,255,136,.15);color:#00ff88}
+.vtitle{flex:1;font-size:12px;font-weight:700;line-height:1.3}
+.vcvss{font-family:'Space Mono',monospace;font-size:10px;color:#64748b;flex-shrink:0}
+.vtog{color:#64748b;font-size:12px;flex-shrink:0}
+.vb{display:none;padding:0 12px 12px 12px}
+.vb.open{display:block}
+.vdesc{font-size:11px;color:#94a3b8;line-height:1.6;margin-bottom:8px}
+.vmeta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.vtag{font-size:9px;padding:2px 7px;border-radius:4px;font-family:'Space Mono',monospace}
+.vtag.port{background:rgba(0,212,255,.08);color:#00d4ff;border:1px solid rgba(0,212,255,.2)}
+.vtag.cve{background:rgba(168,85,247,.08);color:#a855f7;border:1px solid rgba(168,85,247,.2)}
+.vtag.owasp{background:rgba(255,170,0,.08);color:#ffaa00;border:1px solid rgba(255,170,0,.2)}
+.vfix{background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.12);border-radius:5px;padding:8px 10px;font-size:11px;color:#e2e8f0;line-height:1.5}
+.vfix-lbl{font-size:9px;color:#00ff88;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;font-family:'Space Mono',monospace}
+
+.rep-box{background:#111827;border:1px solid rgba(0,255,136,.15);border-radius:8px;padding:16px;margin-bottom:12px}
+.rep-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.rep-cell{background:#0a0e17;border-radius:5px;padding:8px 10px}
+.rep-cell-lbl{font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;font-family:'Space Mono',monospace}
+.rep-cell-val{font-size:11px;font-family:'Space Mono',monospace}
+.rep-summary{font-size:12px;color:#94a3b8;line-height:1.7}
+.exec{font-size:12px;color:#94a3b8;line-height:1.8;margin-bottom:12px}
+.ftable{width:100%;border-collapse:collapse;font-size:11px;font-family:'Space Mono',monospace}
+.ftable th{text-align:left;padding:7px 8px;color:#64748b;font-weight:400;border-bottom:1px solid rgba(255,255,255,.06)}
+.ftable td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.04);color:#e2e8f0}
+
+.abtn{padding:9px 14px;background:#111827;border:1px solid rgba(255,255,255,.08);color:#94a3b8;font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;border-radius:6px;cursor:pointer;transition:all .2s;text-align:center}
+.abtn:hover{border-color:#00ff88;color:#00ff88}
+.abtn.pri{background:rgba(0,255,136,.07);border-color:rgba(0,255,136,.3);color:#00ff88}
+.arow{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.empty{text-align:center;padding:30px;color:#64748b;font-family:'Space Mono',monospace;font-size:11px}
+</style>
+
+<div class="shell">
+
+<div class="topbar">
+  <div style="display:flex;align-items:center">
+    <span class="logo mono">VULNSCAN PRO</span>
+    <span class="ver">v2.4.1</span>
+  </div>
+  <div class="live"><span class="dot"></span>System online · CVE-DB 2025.05</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="sw('cfg')">⚙ Configure</div>
+  <div class="tab" onclick="sw('scan')">⟳ Scan</div>
+  <div class="tab" onclick="sw('res')">◈ Results</div>
+  <div class="tab" onclick="sw('rep')">☰ Report</div>
+</div>
+
+<div class="panel active" id="p-cfg">
+  <div class="row2">
+    <div class="field"><label>Target IP / Hostname</label><input id="cTarget" value="192.168.1.0/24"/></div>
+    <div class="field"><label>Port Range</label><input id="cPorts" value="1-1024"/></div>
+    <div class="field"><label>Timing Template</label>
+      <select id="cTiming">
+        <option>T0 — Paranoid (IDS evasion)</option>
+        <option>T1 — Sneaky</option>
+        <option>T2 — Polite</option>
+        <option selected>T3 — Normal</option>
+        <option>T4 — Aggressive</option>
+        <option>T5 — Insane</option>
+      </select>
+    </div>
+    <div class="field"><label>OS Detection</label>
+      <select id="cOS"><option selected>Enabled</option><option>Disabled</option></select>
+    </div>
+  </div>
+
+  <div class="checks-label">Scan Mode</div>
+  <div class="modes" id="modes">
+    <div class="mode" data-m="quick" onclick="selMode(this)"><div class="mode-icon">⚡</div><div class="mode-name">Quick</div><div class="mode-desc">Top 100 ports only</div></div>
+    <div class="mode sel" data-m="full" onclick="selMode(this)"><div class="mode-icon">🔍</div><div class="mode-name">Full</div><div class="mode-desc">All ports + services</div></div>
+    <div class="mode" data-m="stealth" onclick="selMode(this)"><div class="mode-icon">👁</div><div class="mode-name">Stealth</div><div class="mode-desc">SYN scan, no ping</div></div>
+    <div class="mode" data-m="vuln" onclick="selMode(this)"><div class="mode-icon">🧨</div><div class="mode-name">Exploit</div><div class="mode-desc">Deep vuln analysis</div></div>
+  </div>
+
+  <div class="checks-label">Security Checks</div>
+  <div class="checks">
+    <div class="chk on" onclick="this.classList.toggle('on')"><div class="chkbox">✓</div><div class="chk-label">CVE Matching</div></div>
+    <div class="chk on" onclick="this.classList.toggle('on')"><div class="chkbox">✓</div><div class="chk-label">Service Fingerprint</div></div>
+    <div class="chk on" onclick="this.classList.toggle('on')"><div class="chkbox">✓</div><div class="chk-label">Default Credentials</div></div>
+    <div class="chk on" onclick="this.classList.toggle('on')"><div class="chkbox">✓</div><div class="chk-label">SSL/TLS Analysis</div></div>
+    <div class="chk on" onclick="this.classList.toggle('on')"><div class="chkbox">✓</div><div class="chk-label">HTTP Headers</div></div>
+    <div class="chk" onclick="this.classList.toggle('on')"><div class="chkbox">✓</div><div class="chk-label">Brute Force Sim</div></div>
+    <div class="chk" onclick="this.classList.toggle('on')"><div class="chkbox">✓</div><div class="chk-label">DNS Enumeration</div></div>
+    <div class="chk" onclick="this.classList.toggle('on')"><div class="chkbox">✓</div><div class="chk-label">SQLi Detection</div></div>
+    <div class="chk" onclick="this.classList.toggle('on')"><div class="chkbox">✓</div><div class="chk-label">XSS Probing</div></div>
+  </div>
+
+  <button class="run-btn" id="runBtn" onclick="startScan()">INITIALIZE SCAN →</button>
+</div>
+
+<div class="panel" id="p-scan">
+  <div class="prog-wrap">
+    <div class="prog-top"><span class="prog-lbl" id="pLbl">Waiting...</span><span class="prog-pct" id="pPct">0%</span></div>
+    <div class="prog-track"><div class="prog-fill" id="pFill"></div></div>
+  </div>
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="td" style="background:#ff5f56"></div>
+      <div class="td" style="background:#ffbd2e"></div>
+      <div class="td" style="background:#27c93f"></div>
+      <span class="term-title mono">vulnscan@kali:~$</span>
+    </div>
+    <div class="term-body" id="termBody">
+      <div class="tl tc-g">VulnScan Pro v2.4.1 — by Prajwal Shelke</div>
+      <div class="tl tc-w">Ready. Configure and press INITIALIZE SCAN.</div>
+    </div>
+  </div>
+  <div class="empty" id="scanEmpty">Run a scan from Configure tab to begin.</div>
+</div>
+
+<div class="panel" id="p-res">
+  <div class="empty" id="resEmpty">No results yet. Run a scan first.</div>
+  <div id="resContent" style="display:none">
+    <div class="stats" id="stats"></div>
+    <div class="risk-box">
+      <div class="risk-top"><span class="risk-title">Overall Risk Score</span><span class="risk-score" id="rScore">—</span></div>
+      <div class="risk-track"><div class="risk-bar" id="rBar" style="width:0%"></div></div>
+      <div class="risk-lbls"><span>Low</span><span>Medium</span><span>High</span><span>Critical</span></div>
+    </div>
+    <div class="sec-hd"><span>Port Map</span></div>
+    <div class="pmap" id="portMap"></div>
+    <div class="sec-hd"><span>Vulnerabilities</span></div>
+    <div class="vlst" id="vulnList"></div>
+    <div class="arow">
+      <div class="abtn pri" onclick="sw('rep')">View Full Report</div>
+      <div class="abtn" onclick="sendPrompt('Give me remediation steps for all critical and high vulnerabilities found in the network scan')">Remediation Guide ↗</div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="p-rep">
+  <div class="empty" id="repEmpty">No report yet. Run a scan first.</div>
+  <div id="repContent" style="display:none">
+    <div class="rep-box">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div><div style="font-size:15px;font-weight:800;margin-bottom:3px">Penetration Test Report</div><div style="font-size:11px;color:#64748b;font-family:'Space Mono',monospace" id="rDate"></div></div>
+        <div style="text-align:right"><div style="font-size:9px;color:#64748b;margin-bottom:3px">REPORT ID</div><div style="font-size:11px;font-family:'Space Mono',monospace;color:#00ff88" id="rId"></div></div>
+      </div>
+      <div class="rep-row">
+        <div class="rep-cell"><div class="rep-cell-lbl">Target</div><div class="rep-cell-val" id="rTarget"></div></div>
+        <div class="rep-cell"><div class="rep-cell-lbl">Mode</div><div class="rep-cell-val" id="rMode"></div></div>
+        <div class="rep-cell"><div class="rep-cell-lbl">Risk Level</div><div class="rep-cell-val" id="rRisk"></div></div>
+      </div>
+      <div class="rep-summary" id="rSum"></div>
+    </div>
+    <div class="sec-hd"><span>Executive Summary</span></div>
+    <div class="exec" id="rExec"></div>
+    <div class="sec-hd"><span>Findings Table</span></div>
+    <div style="overflow-x:auto;margin-bottom:12px"><table class="ftable" id="fTable"></table></div>
+    <div class="arow">
+      <div class="abtn pri" onclick="sendPrompt('Write a full executive penetration test report for a CISO audience based on this scan')">Executive Report ↗</div>
+      <div class="abtn" onclick="sendPrompt('Create a prioritized remediation roadmap for all findings from this network vulnerability scan')">Remediation Plan ↗</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const DB={
+  quick:{ports:[{n:22,s:'SSH',st:'open'},{n:80,s:'HTTP',st:'open'},{n:443,s:'HTTPS',st:'open'},{n:8080,s:'HTTP-Alt',st:'closed'}],
+    vulns:[{sev:'high',title:'SSH Weak Cipher Suites',desc:'Server supports deprecated ciphers including arcfour and 3DES-CBC, vulnerable to SWEET32 birthday attack.',port:'22/tcp',cve:'CVE-2023-38408',owasp:'A02:2021',cvss:'7.5',fix:'Remove weak ciphers from /etc/ssh/sshd_config. Use only aes256-gcm and chacha20-poly1305.'},
+      {sev:'medium',title:'Missing HTTP Security Headers',desc:'The web server omits X-Frame-Options, Content-Security-Policy, and HSTS headers, enabling clickjacking and MIME sniffing.',port:'80/tcp',cve:'CWE-693',owasp:'A05:2021',cvss:'5.3',fix:'Add security headers in web server config or via middleware. Use helmet.js for Node apps.'}]},
+  full:{ports:[{n:21,s:'FTP',st:'open'},{n:22,s:'SSH',st:'open'},{n:23,s:'Telnet',st:'open'},{n:80,s:'HTTP',st:'open'},{n:443,s:'HTTPS',st:'open'},{n:3306,s:'MySQL',st:'open'},{n:8080,s:'HTTP-Alt',st:'filtered'},{n:9200,s:'Elasticsearch',st:'open'},{n:27017,s:'MongoDB',st:'open'},{n:6379,s:'Redis',st:'filtered'}],
+    vulns:[{sev:'critical',title:'Plaintext Telnet Service Exposed',desc:'Telnet on port 23 transmits all credentials and data in cleartext. Any network-positioned attacker can intercept full sessions.',port:'23/tcp',cve:'CVE-1999-0619',owasp:'A02:2021',cvss:'9.8',fix:'Disable Telnet immediately: systemctl disable telnet. Deploy SSH with key-based auth only.'},
+      {sev:'critical',title:'Anonymous FTP Login Enabled',desc:'FTP server permits unauthenticated anonymous logins with read/write filesystem access. Attackers can exfiltrate or overwrite sensitive files.',port:'21/tcp',cve:'CVE-1999-0497',owasp:'A07:2021',cvss:'9.1',fix:'Set anonymous_enable=NO in vsftpd.conf. Replace FTP with SFTP.'},
+      {sev:'high',title:'MySQL Exposed to Network',desc:'MySQL database port is publicly reachable. Combined with weak credentials this allows direct database access and potential RCE via UDF.',port:'3306/tcp',cve:'CVE-2012-2122',owasp:'A05:2021',cvss:'7.8',fix:'Bind MySQL to 127.0.0.1 in my.cnf. Block external access to port 3306 via firewall.'},
+      {sev:'high',title:'SSH Weak Cipher Suites',desc:'Server supports deprecated cipher suites enabling SWEET32 and related attacks on long-lived sessions.',port:'22/tcp',cve:'CVE-2023-38408',owasp:'A02:2021',cvss:'7.5',fix:'Restrict ciphers in sshd_config. Disable DSA host keys.'},
+      {sev:'medium',title:'Elasticsearch Unauthenticated',desc:'Elasticsearch API is accessible without authentication, exposing all indexed data and enabling arbitrary data manipulation.',port:'9200/tcp',cve:'CVE-2015-1427',owasp:'A01:2021',cvss:'6.5',fix:'Enable X-Pack security. Set xpack.security.enabled: true in elasticsearch.yml.'},
+      {sev:'medium',title:'MongoDB No Authentication',desc:'MongoDB instance accessible without authentication, exposing all databases to read/write access from any network client.',port:'27017/tcp',cve:'CVE-2013-4650',owasp:'A01:2021',cvss:'6.3',fix:'Enable auth: security.authorization: enabled in mongod.conf. Create admin user.'}]},
+  stealth:{ports:[{n:22,s:'SSH',st:'open'},{n:80,s:'HTTP',st:'open'},{n:443,s:'HTTPS',st:'open'},{n:3389,s:'RDP',st:'open'},{n:5900,s:'VNC',st:'filtered'},{n:1433,s:'MSSQL',st:'open'}],
+    vulns:[{sev:'critical',title:'RDP BlueKeep (CVE-2019-0708)',desc:'Remote Desktop is exposed and fingerprint matches systems vulnerable to BlueKeep — a pre-auth wormable RCE. No user interaction required.',port:'3389/tcp',cve:'CVE-2019-0708',owasp:'A06:2021',cvss:'9.8',fix:'Apply MS patch KB4499175 immediately. Place RDP behind VPN. Enable Network Level Authentication.'},
+      {sev:'critical',title:'MSSQL Default SA Credentials',desc:'SQL Server accepts login with default SA account. Full DBA access confirmed — enables xp_cmdshell for OS command execution.',port:'1433/tcp',cve:'CVE-2000-1209',owasp:'A07:2021',cvss:'9.0',fix:'Change SA password immediately. Disable SA if not needed. Enable SQL Server Audit.'},
+      {sev:'high',title:'SSH Weak Cipher Suites',desc:'Server supports deprecated ciphers enabling SWEET32 attack.',port:'22/tcp',cve:'CVE-2023-38408',owasp:'A02:2021',cvss:'7.5',fix:'Remove weak ciphers from sshd_config.'},
+      {sev:'low',title:'TLS Certificate Expiring Soon',desc:'SSL certificate expires in 18 days. May indicate poor certificate lifecycle management.',port:'443/tcp',cve:'N/A',owasp:'A02:2021',cvss:'3.1',fix:"Renew TLS certificate. Set up auto-renewal via Let's Encrypt certbot."}]},
+  vuln:{ports:[{n:22,s:'SSH',st:'open'},{n:80,s:'HTTP',st:'open'},{n:443,s:'HTTPS',st:'open'},{n:5432,s:'PostgreSQL',st:'open'},{n:6379,s:'Redis',st:'open'},{n:8443,s:'HTTPS-Alt',st:'open'},{n:4444,s:'Metasploit',st:'open'},{n:9090,s:'Prometheus',st:'filtered'}],
+    vulns:[{sev:'critical',title:'Redis RCE — No Authentication',desc:'Redis running without requirepass, bound to all interfaces. Exploitation via SLAVEOF/CONFIG SET allows writing arbitrary files leading to full RCE.',port:'6379/tcp',cve:'CVE-2022-0543',owasp:'A01:2021',cvss:'10.0',fix:'Set requirepass in redis.conf. Bind to 127.0.0.1. Disable CONFIG and SLAVEOF if unused.'},
+      {sev:'critical',title:'SQL Injection — /api/users',desc:'Parameter "id" on /api/users vulnerable to UNION-based SQL injection. Full schema, user table, and admin credentials extracted.',port:'80/tcp',cve:'CWE-89',owasp:'A03:2021',cvss:'9.4',fix:'Use parameterized queries. Implement WAF. Apply least privilege on DB user.'},
+      {sev:'high',title:'PostgreSQL Default Credentials',desc:'PostgreSQL accepts authentication with default postgres:postgres credentials, granting full superuser access to all databases.',port:'5432/tcp',cve:'CWE-521',owasp:'A07:2021',cvss:'8.2',fix:'Change postgres password. Edit pg_hba.conf to restrict client IPs.'},
+      {sev:'medium',title:'Directory Listing Enabled',desc:'Apache exposes directory listings on /backup and /uploads, revealing application structure and backup files.',port:'80/tcp',cve:'CWE-548',owasp:'A01:2021',cvss:'5.3',fix:'Add Options -Indexes to Apache config. Move backups off the web root.'},
+      {sev:'low',title:'Server Version Disclosure',desc:'HTTP headers expose Apache 2.4.51 and PHP 7.4.3, enabling targeted exploit selection.',port:'80/tcp',cve:'CWE-200',owasp:'A05:2021',cvss:'3.7',fix:'Set ServerTokens Prod. Disable PHP expose_php.'}]}
+};
+
+const SEV={critical:0,high:1,medium:2,low:3,info:4};
+let mode='full',lastR=null,iv=null;
+
+function sw(t){
+  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(el=>el.classList.remove('active'));
+  const tabs=['cfg','scan','res','rep'];
+  document.querySelectorAll('.tab')[tabs.indexOf(t)].classList.add('active');
+  document.getElementById('p-'+t).classList.add('active');
+}
+
+function selMode(el){
+  document.querySelectorAll('.mode').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  mode=el.dataset.m;
+}
+
+function tlog(msg,cls='tc-w'){
+  const tb=document.getElementById('termBody');
+  const d=document.createElement('div');
+  d.className='tl '+cls;
+  d.textContent='['+new Date().toLocaleTimeString('en-GB',{hour12:false})+'] '+msg;
+  tb.appendChild(d);
+  tb.scrollTop=tb.scrollHeight;
+}
+
+function setP(pct,lbl){
+  document.getElementById('pFill').style.width=pct+'%';
+  document.getElementById('pPct').textContent=pct+'%';
+  document.getElementById('pLbl').textContent=lbl;
+}
+
+function startScan(){
+  const target=document.getElementById('cTarget').value.trim()||'192.168.1.0/24';
+  mode=document.querySelector('.mode.sel')?.dataset.m||'full';
+  document.getElementById('runBtn').disabled=true;
+  document.getElementById('scanEmpty').style.display='none';
+  sw('scan');
+  document.getElementById('termBody').innerHTML='';
+  tlog('VulnScan Pro v2.4.1 — by Prajwal Shelke','tc-g');
+  tlog('Starting '+mode+' scan → '+target,'tc-b');
+
+  const steps=[
+    [8,'ARP Discovery','Host discovery on '+target,'tc-w'],
+    [18,'TCP SYN Probe','Sending SYN packets to port range...','tc-w'],
+    [30,'Port Enumeration','Mapping open, closed, filtered ports...','tc-w'],
+    [42,'Service Detection','Fingerprinting service versions...','tc-b'],
+    [52,'OS Fingerprinting','Analysing TCP/IP stack signatures...','tc-w'],
+    [63,'CVE Matching','Cross-referencing CVE database 2025.05...','tc-y'],
+    [72,'Auth Testing','Testing default credentials on services...','tc-y'],
+    [80,'SSL/TLS Analysis','Evaluating cipher suites and cert validity...','tc-w'],
+    [88,'Exploit Verification','Confirming vulnerability exploitability...','tc-r'],
+    [95,'Risk Scoring','Calculating CVSS composite score...','tc-b'],
+    [100,'Complete','Scan finished — '+DB[mode].vulns.length+' vulnerabilities found','tc-g'],
+  ];
+
+  let i=0;
+  clearInterval(iv);
+  iv=setInterval(()=>{
+    if(i>=steps.length){clearInterval(iv);document.getElementById('runBtn').disabled=false;showResults(target);return;}
+    const[pct,lbl,msg,cls]=steps[i];setP(pct,lbl);tlog(msg,cls);i++;
+  },500);
+}
+
+function showResults(target){
+  const data=DB[mode];
+  lastR={mode,target,data};
+  const vulns=[...data.vulns].sort((a,b)=>SEV[a.sev]-SEV[b.sev]);
+  const crit=vulns.filter(v=>v.sev==='critical').length;
+  const high=vulns.filter(v=>v.sev==='high').length;
+  const med=vulns.filter(v=>v.sev==='medium').length;
+  const low=vulns.filter(v=>v.sev==='low').length;
+  const open=data.ports.filter(p=>p.st==='open').length;
+  const risk=Math.min(100,crit*25+high*12+med*5+low*2);
+  const rc=risk>=75?'#ff4444':risk>=50?'#ffaa00':risk>=25?'#00d4ff':'#00ff88';
+  const rl=risk>=75?'CRITICAL':risk>=50?'HIGH':risk>=25?'MEDIUM':'LOW';
+
+  document.getElementById('stats').innerHTML=
+    `<div class="sc crit"><span class="sn crit">${crit}</span><span class="sl">Critical</span></div>`+
+    `<div class="sc high"><span class="sn high">${high}</span><span class="sl">High</span></div>`+
+    `<div class="sc med"><span class="sn med">${med}</span><span class="sl">Medium</span></div>`+
+    `<div class="sc low"><span class="sn low">${low}</span><span class="sl">Low</span></div>`+
+    `<div class="sc info"><span class="sn info">${open}</span><span class="sl">Open Ports</span></div>`;
+
+  document.getElementById('rScore').textContent=risk+'/100';
+  document.getElementById('rScore').style.color=rc;
+  document.getElementById('rBar').style.width=risk+'%';
+
+  document.getElementById('portMap').innerHTML=data.ports.map(p=>
+    `<div class="pc ${p.st}"><div class="pn">${p.n}</div><div class="ps">${p.s}</div><div class="pst">${p.st}</div></div>`
+  ).join('');
+
+  document.getElementById('vulnList').innerHTML=vulns.map((v,i)=>
+    `<div class="vc ${v.sev}">
+      <div class="vh" onclick="tvuln(${i})">
+        <span class="vsev ${v.sev}">${v.sev}</span>
+        <span class="vtitle">${v.title}</span>
+        <span class="vcvss">CVSS ${v.cvss}</span>
+        <span class="vtog" id="vt${i}">▼</span>
+      </div>
+      <div class="vb" id="vb${i}">
+        <p class="vdesc">${v.desc}</p>
+        <div class="vmeta">
+          <span class="vtag port">Port ${v.port}</span>
+          <span class="vtag cve">${v.cve}</span>
+          <span class="vtag owasp">${v.owasp}</span>
+        </div>
+        <div class="vfix"><div class="vfix-lbl">Remediation</div>${v.fix}</div>
+      </div>
+    </div>`
+  ).join('');
+
+  document.getElementById('resEmpty').style.display='none';
+  document.getElementById('resContent').style.display='block';
+  buildReport(target,vulns,risk,rl,rc,crit,high,med,low,open);
+  sw('res');
+}
+
+function tvuln(i){
+  const b=document.getElementById('vb'+i);
+  const t=document.getElementById('vt'+i);
+  const open=b.classList.toggle('open');
+  t.textContent=open?'▲':'▼';
+}
+
+function buildReport(target,vulns,risk,rl,rc,crit,high,med,low,open){
+  const now=new Date();
+  const id='RPT-'+Math.random().toString(36).substr(2,8).toUpperCase();
+  document.getElementById('rDate').textContent='Generated: '+now.toLocaleString();
+  document.getElementById('rId').textContent=id;
+  document.getElementById('rTarget').textContent=target;
+  document.getElementById('rMode').textContent=lastR.mode.toUpperCase();
+  document.getElementById('rRisk').textContent=rl;
+  document.getElementById('rRisk').style.color=rc;
+  document.getElementById('rSum').textContent='Assessment of '+target+' identified '+vulns.length+' vulnerabilities across '+open+' open ports. Immediate remediation required for '+crit+' critical and '+high+' high severity findings.';
+  document.getElementById('rExec').innerHTML='A '+lastR.mode+' scan of <code style="color:#00ff88">'+target+'</code> was conducted on '+now.toDateString()+'. The assessment identified <strong>'+vulns.length+' security vulnerabilities</strong> with a composite risk score of <strong>'+risk+'/100 ('+rl+')</strong>.<br><br>'+crit+' critical vulnerabilities require immediate attention as they may allow unauthenticated RCE or full system compromise. '+high+' high severity findings should be remediated within 7 days. The '+med+' medium severity issues should be addressed within 30 days.';
+  document.getElementById('fTable').innerHTML=
+    '<thead><tr>'+['Severity','Vulnerability','Port','CVE','CVSS'].map(h=>`<th>${h}</th>`).join('')+'</tr></thead>'+
+    '<tbody>'+vulns.map(v=>`<tr><td><span class="vsev ${v.sev}" style="font-size:9px">${v.sev}</span></td><td>${v.title}</td><td>${v.port}</td><td style="color:#a855f7">${v.cve}</td><td style="color:#ffaa00">${v.cvss}</td></tr>`).join('')+'</tbody>';
+  document.getElementById('repEmpty').style.display='none';
+  document.getElementById('repContent').style.display='block';
+}
+</script>
